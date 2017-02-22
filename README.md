@@ -9,6 +9,8 @@ Pulled from [Matthias Loibl's PR on GitHub](https://github.com/kelseyhightower/d
 ```
 docker build -t mlaccetti/dns01-exec-plugin-r53:build -f Dockerfile.build .
 docker run -it --rm -v $(pwd):/usr/src/dns01-exec-plugin-r53 mlaccetti/dns01-exec-plugin-r53:build
+
+docker build -t mlaccetti/dns01-exec-plugin-r53 .
 ```
 
 ### Usage
