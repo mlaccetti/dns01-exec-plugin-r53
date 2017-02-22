@@ -1,0 +1,15 @@
+FROM golang:1.8-alpine
+
+RUN apk add --no-cache bash git
+
+RUN mkdir -p /usr/src/dns01-exec-plugin-r53
+
+ADD docker-entrypoint.sh /usr/bin/docker-entrypoint.sh
+
+RUN chmod a+x /usr/bin/docker-entrypoint.sh
+
+VOLUME /usr/src/dns01-exec-plugin-r53
+
+WORKDIR /usr/src/dns01-exec-plugin-r53
+
+ENTRYPOINT ["/usr/bin/docker-entrypoint.sh"]
