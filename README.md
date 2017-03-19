@@ -1,5 +1,7 @@
 # route53 DNS-01 Exec Plugin
 
+[![Build Status](https://travis-ci.org/mlaccetti/dns01-exec-plugin-r53.svg?branch=master)](https://travis-ci.org/mlaccetti/dns01-exec-plugin-r53)
+
 **Credit**
 
 Pulled from [Matthias Loibl's PR on GitHub](https://github.com/kelseyhightower/dns01-exec-plugins/pull/1)
