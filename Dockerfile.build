@@ -1,15 +1,15 @@
+
 FROM golang:1.8-alpine
 
-RUN apk add --no-cache bash git
+LABEL MAINTAINER="Michael Laccetti <michael@laccetti.com>"
 
-RUN mkdir -p /usr/src/dns01-exec-plugin-r53
+RUN mkdir -p /go/src/github.com/mlaccetti/dns01-exec-plugin-r53 && \
+  apk add --no-cache bash gcc git musl-dev libc-dev
 
-ADD docker-entrypoint.sh /usr/bin/docker-entrypoint.sh
+VOLUME /go/src/github.com/mlaccetti/dns01-exec-plugin-r53
 
-RUN chmod a+x /usr/bin/docker-entrypoint.sh
+WORKDIR /go/src/github.com/mlaccetti/dns01-exec-plugin-r53
 
-VOLUME /usr/src/dns01-exec-plugin-r53
+ENV GOOS=linux GOPATH=/go
 
-WORKDIR /usr/src/dns01-exec-plugin-r53
-
-ENTRYPOINT ["/usr/bin/docker-entrypoint.sh"]
+ENTRYPOINT ["/go/src/github.com/mlaccetti/dns01-exec-plugin-r53/docker-entrypoint.sh"]
