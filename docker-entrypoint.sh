@@ -11,5 +11,5 @@ else
   mkdir dist
   cd route53
   go get github.com/aws/aws-sdk-go
-  go build -o ../dist/dns01-exec-plugin-r53 -v
+  go build -o ../dist/route53 -v ...
 fi
