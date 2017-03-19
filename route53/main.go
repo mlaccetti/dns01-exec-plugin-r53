@@ -1,26 +1,29 @@
-// Copyright 2017 <???> All Rights Reserved.
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//     http://www.apache.org/licenses/LICENSE-2.0
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
 package main
 
 import (
-  "encoding/json"
-  "io"
-  "io/ioutil"
-  "os"
+	"encoding/json"
+	"io"
+	"io/ioutil"
+	"os"
+
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/credentials"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/route53"
 )
 
 type Config struct {
   Username string `json:"username"`
   Token    string `json:"token"`
+}
+
+func r53(config Config) (*route53.Route53) {
+	awsCredentials := credentials.NewStaticCredentials(config.Username, config.Token, "")
+	awsConfig := aws.NewConfig()
+	awsConfig.Credentials = awsCredentials
+	sess := session.Must(session.NewSession(awsConfig))
+
+	return route53.New(sess)
 }
 
 func main() {
@@ -29,9 +32,6 @@ func main() {
   domain := os.Getenv("DOMAIN")
   fqdn := os.Getenv("FQDN")
   token := os.Getenv("TOKEN")
-
-  // AWS
-  zoneID := os.Getenv("ZONEID")
 
   if apiVersion != "v1" {
     os.Exit(3)
@@ -50,12 +50,15 @@ func main() {
     os.Exit(2)
   }
 
-  c, err := newClient(zoneID)
-  if err != nil {
-    io.WriteString(os.Stderr, "Error creating google DNS client"+err.Error())
-    os.Exit(1)
-  }
+	r53client := r53(config)
 
+	zoneId, err := getZoneId(r53client, domain)
+	if err != nil {
+		io.WriteString(os.Stderr, "Error retreiving zone ID from AWS: " + err.Error())
+		os.Exit(1)
+	}
+
+  c := newClient(r53client , zoneId)
   switch command {
   case "CREATE":
     err = c.create(domain, fqdn, token)
